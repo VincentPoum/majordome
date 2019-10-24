@@ -26,8 +26,8 @@ class SmsTransaction(private val from: String?, private val message: String?) {
         val toNum = users[user].tel
         val uri = "$smsServer/SendSMS/user=&password=123456&phoneNumber=$toNum&msg=$content"
         print("Envoi sms $uri ----> ")
-        //val response = smsClient.get<String>(uri)
-        //println("$response <----")
+        val response = smsClient.get<String>(uri)
+        println("$response <----")
         smsClient.close()
     }
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="fr.lapoumerole.ApplicationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2019-10-23T16:37:22" hostname="/0:0:0:0:0:0:0:1%lo" time="5.869">
+  <properties/>
+  <testcase name="testRoot" classname="fr.lapoumerole.ApplicationTest" time="5.869"/>
+  <system-out><![CDATA[2019-10-23 18:37:24.697 [Test worker] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

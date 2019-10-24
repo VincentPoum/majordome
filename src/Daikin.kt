@@ -36,8 +36,9 @@ class Daikin(val adress: String?) {
     suspend fun getDeviceInfos(): DaikinInfos{
         val smsClient = HttpClient()
         val uri= "http://${this.adress}/common/basic_info"
-        println("getDeviceInfo $uri")
+        print("getDeviceInfo $uri ---> ")
         val response = smsClient.get<String>(uri)
+        println(response.take(10))
         var res = response.split(",").map{it.split("=")}.forEach{
             when (it[0]) {
                 "type" -> infos.type = it[1]
@@ -52,8 +53,9 @@ class Daikin(val adress: String?) {
     suspend fun getControlInfo(): DaikinMandatoryControls{
         val smsClient = HttpClient()
         val uri= "http://${this.adress}/aircon/get_control_info"
-        println("getControlInfo $uri")
+        print("getControlInfo $uri ---> ")
         val response = smsClient.get<String>(uri)
+        println(response.take(10))
         var res = response.split(",").map{it.split("=")}.forEach{
             when (it[0]) {
                 "pow" -> controls.power = it[1].toInt()
@@ -71,8 +73,9 @@ class Daikin(val adress: String?) {
     suspend fun getSensorInfo(): DaikinSensors{
         val smsClient = HttpClient()
         val uri= "http://${adress}/aircon/get_sensor_info"
-        println("getSensorInfo $uri")
+        print("getSensorInfo $uri ---> ")
         val response = smsClient.get<String>(uri)
+        println(response.take(10))
         var res = response.split(",").slice(1..5).map{it.split("=")}.forEach{
             when (it[0]) {
                 "htemp" -> sensors.htemp = it[1].toFloat()
