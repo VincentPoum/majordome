@@ -10,6 +10,7 @@ import kotlinx.html.*
 import kotlinx.css.*
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
+import io.ktor.client.request.get
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -33,6 +34,15 @@ fun Application.module(testing: Boolean = false) {
         get("/daikin") {
             val leDevice = Daikin("192.168.0.161").getSensorInfo()
             println(leDevice.otemp)
+        }
+
+        get("/ip") {
+            val smsClient = HttpClient()
+            val uri= "http://monip.org"
+            print("getIp $uri ---> ")
+            val response = smsClient.get<String>(uri)
+            println(response)
+            call.respondText(response)
         }
 
         get("/html-dsl") {

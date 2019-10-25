@@ -10,20 +10,19 @@ class SmsTransaction(private val from: String?, private val message: String?) {
         return ("ret Help")
     }
 
-    suspend fun formatSms(user: Int, texte: String){
+    suspend fun formatSms(user: Int, texte: String) {
         var ess = ""
-        texte.split("|").forEach{
-            it.split(" - ").forEach{
+        texte.split("|").forEach {
+            it.split(" - ").forEach {
                 ess += it.take(4)
             }
         }
-        sendSms(user, ess)
+        sendSms(users[user].tel, ess)
     }
 
-    suspend fun sendSms(user: Int, content: String) {
+    suspend fun sendSms(toNum: String, content: String) {
         val smsClient = HttpClient()
         val smsServer = "http://192.168.0.151:5554"
-        val toNum = users[user].tel
         val uri = "$smsServer/SendSMS/user=&password=123456&phoneNumber=$toNum&msg=$content"
         print("Envoi sms $uri ----> ")
         val response = smsClient.get<String>(uri)
@@ -32,27 +31,33 @@ class SmsTransaction(private val from: String?, private val message: String?) {
     }
 
     suspend fun parse(): String {
-        // Structure du SMS
-        // User (0..99) < Ordre séparé par |
-        // Chaque ordre : appareil concerné - action - consigne
-        message?.let {
-            // verif emetteur
-            val res = message.split("<")
-            val numUser = res[0].toInt()
-            try {
-                val resUser = users.binarySearch { numCompare(it, numUser) }
-                if (from?.takeLast(8) == users[resUser].tel.takeLast(8)) {
-                    var retour = ""
-                    val ordres = res[1].split("|").forEach{
-                        retour += Instruction(it).process()
+        from?.let {
+            val num = from.replace("+33", "0")
+            if (num.matches(Regex("^(06|07)[0-9]{8}$"))) {
+                val id = users.filter { it.tel == num }[0]
+                id?.let {
+                    message?.let {
+                        val res = message.split("<")
+                        if (res.size == 1) {
+                            sendSms(num, "Message erroné")
+                            return ("Pb de message, message erroné.")
+                        }
+                        if (id.num == res[0].toInt()) {
+                            var retour = ""
+                            res[1].split("|").forEach {
+                                retour += Instruction(it).process()
+                            }
+                            formatSms(id.num, retour)
+                            return("Message traité.")
+                        }
                     }
-                    formatSms(resUser, retour)
                 }
-            } catch (e: Exception){
+                sendSms(num,"Ne vous êtes-vous pas trompé de numéro ?")
                 return("Utilisateur inconnu")
             }
-
+            return("Mauvais numéro.")
         }
-        return ("receive sms ${this.message} from ${this.from}")
+        return ("Erreur")
     }
+
 }
