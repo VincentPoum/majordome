@@ -9,35 +9,28 @@ class Instruction(private val instruct: String) {
         when (ordre[0]) {
             "status" -> {
                 val leDevice1 = Daikin("192.168.0.161")
-                var leD1 = ""
-                leDevice1.getDeviceInfos().name.substring(1).toUpperCase().split("%").forEach{
-                    var a =(it.first().toInt()-48)*16+if(it.last().toInt()>59){it.last().toInt()-55}else{it.last().toInt()-48}
-                    leD1 += a.toChar()
-                }
-                val leDevice2 = Daikin("192.168.0.162")
-                var leD2 = ""
-                leDevice2.getDeviceInfos().name.substring(1).toUpperCase().split("%").forEach{
-                    var a =(it.first().toInt()-48)*16+if(it.last().toInt()>59){it.last().toInt()-55}else{it.last().toInt()-48}
-                    leD2 += a.toChar()
-                }
+                val leD1 = "R${leDevice1.getName()}"
+                val leDevice2  = Daikin("192.168.0.162")
+                val leD2 = "R${leDevice2.getName()}"
                 with(leDevice1.getSensorInfo()) {
-                    retour = "Temp - Ext - ${this.otemp.toString()}|"
-                    retour += "${leD1} - ${this.htemp.toString()}|"
+                    retour = "WT${this.otemp}|${leD1}-T${this.htemp}|"
                 }
                 with(leDevice2.getSensorInfo()){
-                retour += "${leD2} - ${this.htemp.toString()}|"
+                retour += "${leD2}-T${this.htemp}|"
                 }
                 with( leDevice1.getControlInfo()) {
-                    retour += "${leD1} - Mode - ${this.mode.toString()}|"
-                    retour += "Power - ${this.power.toString()}|"
-                    retour += "Consigne - ${this.stemp.toString()}|"
+                    retour += "${leD1}-M${this.mode}|P${this.power}|C${this.stemp}|"
                 }
                 with( leDevice2.getControlInfo()) {
-                    retour += "${leD2} - Mode - ${this.mode.toString()}|"
-                    retour += "Power - ${this.power.toString()}|"
-                    retour += "Consigne - ${this.stemp.toString()}|"
+                    retour += "${leD2}-M${this.mode}|P${this.power}|C${this.stemp}|"
                 }
                 println(retour)
+            }
+            "RCui" -> {
+                retour = Daikin("192.168.0.161").setControls(ordre[1])
+            }
+            "RSal" -> {
+                retour = Daikin("192.168.0.162").setControls(ordre[1])
             }
             else -> {
                 println("ordre inconnu")

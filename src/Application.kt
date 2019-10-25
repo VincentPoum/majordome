@@ -32,8 +32,8 @@ fun Application.module(testing: Boolean = false) {
         }
 
         get("/daikin") {
-            val leDevice = Daikin("192.168.0.161").getSensorInfo()
-            println(leDevice.otemp)
+            val leDevice = Daikin("192.168.0.161").setControls("pow=1")
+            println(leDevice)
         }
 
         get("/ip") {
