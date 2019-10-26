@@ -11,13 +11,20 @@ class SmsTransaction(private val from: String?, private val message: String?) {
     }
 
     suspend fun formatSms(user: Int, texte: String) {
-        var ess = ""
-        texte.split("|").forEach {
-            it.split(" - ").forEach {
-                ess += it.take(4)
+        var lesms =""
+        for(room in listOf("H","W","RCui","RSal")) {
+            val f2: (String) -> Boolean = { it.contains(room) }
+            var cui = room
+            for (info in texte.split("|").filter(f2)) {
+                when(room.first()){
+                    'R' -> {cui +=info.drop(8)}
+                    'W' -> {cui += info.drop(1)}
+                }
             }
+            if(cui.length>room.length) lesms += cui
         }
-        sendSms(users[user].tel, ess)
+        println(lesms)
+        sendSms(users[user].tel, lesms)
     }
 
     suspend fun sendSms(toNum: String, content: String) {
@@ -50,6 +57,7 @@ class SmsTransaction(private val from: String?, private val message: String?) {
                             formatSms(id.num, retour)
                             return("Message traité.")
                         }
+                        return("Pb de message, id différent de num de tel")
                     }
                 }
                 sendSms(num,"Ne vous êtes-vous pas trompé de numéro ?")

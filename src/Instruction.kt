@@ -9,9 +9,9 @@ class Instruction(private val instruct: String) {
         when (ordre[0]) {
             "status" -> {
                 val leDevice1 = Daikin("192.168.0.161")
-                val leD1 = "R${leDevice1.getName()}"
+                val leD1 = "R${leDevice1.getName().take(6)}"
                 val leDevice2  = Daikin("192.168.0.162")
-                val leD2 = "R${leDevice2.getName()}"
+                val leD2 = "R${leDevice2.getName().take(6)}"
                 with(leDevice1.getSensorInfo()) {
                     retour = "WT${this.otemp}|${leD1}-T${this.htemp}|"
                 }
@@ -19,10 +19,10 @@ class Instruction(private val instruct: String) {
                 retour += "${leD2}-T${this.htemp}|"
                 }
                 with( leDevice1.getControlInfo()) {
-                    retour += "${leD1}-M${this.mode}|P${this.power}|C${this.stemp}|"
+                    retour += "${leD1}-M${this.mode}|${leD1}-P${this.power}|${leD1}-S${this.stemp}|"
                 }
                 with( leDevice2.getControlInfo()) {
-                    retour += "${leD2}-M${this.mode}|P${this.power}|C${this.stemp}|"
+                    retour += "${leD2}-M${this.mode}|${leD2}-P${this.power}|${leD2}-S${this.stemp}|"
                 }
                 println(retour)
             }
